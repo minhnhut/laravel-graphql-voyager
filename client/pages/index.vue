@@ -8,54 +8,35 @@
       <h2 class="subtitle">
         Frontend for laravel backend {{message}}
       </h2>
-      <div class="links">
-        <a
-          href="https://nuxtjs.org/"
-          target="_blank"
-          class="button--green"
-        >
-          Documentation
-        </a>
-        <a
-          href="https://github.com/nuxt/nuxt.js"
-          target="_blank"
-          class="button--grey"
-        >
-          GitHub
-        </a>
-      </div>
+      <ul v-if="!$apollo.queries.users.loading && users">
+        <li v-for="user in users.data">
+          {{user.email}}
+        </li>
+      </ul>
     </div>
   </div>
 </template>
 
 <script lang="ts">
 import Logo from '~/components/Logo.vue'
-import { Vue, Component, Prop } from 'vue-property-decorator'
-import gql from 'graphql-tag'
+import { Vue, Component} from 'vue-property-decorator'
+import UsersQueryGQL from '~/support/apollo/queries/users.graphql'
+import {UserPaginator} from "~/support/apollo/types/types"
 
 @Component({
-  components: {Logo}
+  components: {Logo},
+  apollo: {
+    users: {
+      query: UsersQueryGQL
+    }
+  }
 })
 export default class extends Vue {
+  users: UserPaginator | null = null;
   msg: string = 'hello';
 
-  hello() {
-    this.$apollo.query({
-      query: gql`
-        query {
-            users {
-                paginatorInfo {
-                    total
-                }
-            }
-        }
-    `
-    }).then(result => console.log(result));
-    return 'Great';
-  }
-
   get message() : string {
-    return this.msg + this.hello();
+    return this.msg;
   }
 }
 </script>
