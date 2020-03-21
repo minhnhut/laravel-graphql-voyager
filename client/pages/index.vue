@@ -32,11 +32,11 @@ import {UserPaginator} from "~/support/apollo/types/types"
   }
 })
 export default class extends Vue {
-  users: UserPaginator | null = null;
-  msg: string = 'hello';
+  users?: UserPaginator;
+  msg: string = 'Hello';
 
   get message() : string {
-    return this.msg;
+    return this.msg + " world";
   }
 }
 </script>
@@ -72,9 +72,5 @@ export default class extends Vue {
   color: #526488;
   word-spacing: 5px;
   padding-bottom: 15px;
-}
-
-.links {
-  padding-top: 15px;
 }
 </style>
