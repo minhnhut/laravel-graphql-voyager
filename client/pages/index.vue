@@ -2,7 +2,7 @@
   <div class="container">
     <div>
       <logo />
-      <h1 class="title">
+      <h1 @click="refresh()" class="title">
         client
       </h1>
       <h2 class="subtitle">
@@ -18,12 +18,12 @@
 </template>
 
 <script lang="ts">
-import Logo from '~/components/Logo.vue'
-import { Vue, Component} from 'vue-property-decorator'
-import UsersQueryGQL from '~/support/apollo/queries/users.graphql'
-import {UserPaginator} from "~/support/apollo/types/types"
+  import Logo from '~/components/Logo.vue'
+  import {Component, Vue, Watch} from 'vue-property-decorator'
+  import UsersQueryGQL from '~/support/apollo/queries/users.graphql'
+  import {UserPaginator} from "~/support/apollo/types/types"
 
-@Component({
+  @Component({
   components: {Logo},
   apollo: {
     users: {
@@ -34,10 +34,22 @@ import {UserPaginator} from "~/support/apollo/types/types"
 export default class extends Vue {
   users?: UserPaginator;
   msg: string = 'Hello';
+    changedCount: number = 0;
 
   get message() : string {
-    return this.msg + " world";
+    return this.msg + " world " + this.changedCount;
   }
+
+    @Watch('users')
+    onUsersChanged() {
+      this.changedCount++;
+      this.msg = "Good";
+    }
+
+    refresh() {
+      this.$apollo.queries.users.refetch();
+    }
+
 }
 </script>
 
