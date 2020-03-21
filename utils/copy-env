@@ -40,8 +40,8 @@ if (file_exists(ENV_DIR . "/.env")) {
     $sharedEnvFile = fopen(ENV_DIR . "/.env", "r");
     while ($line = fgets($sharedEnvFile)) {
         $tokens = explode('=', $line, 2);
-        if (count($tokens) > 1) {
-            $env[$tokens[0]] = $line;
+        if (count($tokens) == 2) {
+            $env[$tokens[0]] = trim($tokens[1]);
         }
     }
 }
@@ -62,8 +62,11 @@ foreach ($files as $file) {
 
 
     $envContent = file_get_contents($file);
-    foreach ($env as $varName => $item) {
-        $envContent = str_replace('#${'.$varName.'}', $item, $envContent);
+    foreach ($env as $var => $value) {
+        // Replace ##${APP_URL} with APP_URL=value
+        $envContent = str_replace('##${'.$var.'}', "$var=$value", $envContent);
+        // Replace #${APP_URL} with value
+        $envContent = str_replace('#${'.$var.'}', $value, $envContent);
     }
     file_put_contents(__DIR__ . "/../$projectName/.env", $envContent);
 }

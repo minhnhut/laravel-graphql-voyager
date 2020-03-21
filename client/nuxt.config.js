@@ -1,3 +1,4 @@
+require('dotenv').config({ path: '.env' });
 
 module.exports = {
   mode: 'spa',
@@ -63,7 +64,7 @@ module.exports = {
     clientConfigs: {
       default: {
         // required
-        httpEndpoint: 'http://localhost:8000/graphql',
+        httpEndpoint: `${process.env.BACKEND_URL}/graphql`,
       },
     }
   }
