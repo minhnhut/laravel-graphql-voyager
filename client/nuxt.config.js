@@ -28,6 +28,7 @@ module.exports = {
   ** Plugins to load before mounting the App
   */
   plugins: [
+    // '@/plugins/apollo-config.js'
   ],
   /*
   ** Nuxt.js dev-modules
@@ -42,7 +43,8 @@ module.exports = {
   */
   modules: [
     // Doc: https://github.com/nuxt-community/dotenv-module
-    '@nuxtjs/dotenv'
+    '@nuxtjs/dotenv',
+    '@nuxtjs/apollo'
   ],
   /*
   ** Build configuration
@@ -53,5 +55,16 @@ module.exports = {
     */
     // extend (config, ctx) {
     // }
+  },
+  /**
+   * Apollo config
+   */
+  apollo: {
+    clientConfigs: {
+      default: {
+        // required
+        httpEndpoint: 'http://localhost:8000/graphql',
+      },
+    }
   }
 }

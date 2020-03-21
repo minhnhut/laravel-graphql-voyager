@@ -1,0 +1,69 @@
+#!/usr/bin/env php
+<?php
+
+/**
+ * Combine environment folder in env folder, and distribute it to backend and client folder.
+ *  - .env.client -> will be copied to client/
+ *  - .env.backend -> will be copied to backend/
+ *  - ...
+ *
+ * Shared env name can be defined in .env, then be included in for example .env.client by:
+ * ```
+ *     #${CLIENT_URL}
+ * ```
+ *
+ * `#${CLIENT_URL}` will be then replace by `CLIENT_URL=[value defined in .env]`
+ *
+ * Usage: php copy-env [Environment name]
+ *
+ *
+ * Example:
+ *   - php copy-env dev
+ *   - php copy-env production
+ */
+
+$envName = $argv[1];
+
+if (!file_exists(__DIR__ . "/env/$envName/")) {
+    print_r("Environment '$envName' not existed.\n");
+    print_r("Expected path: " . __DIR__ . "/env/$envName/\n\n");
+    die(1);
+}
+
+define("ENV_DIR", __DIR__ . "/env/$envName");
+
+$files = glob(ENV_DIR . "/.env.*");
+
+// Shared environment variables
+$env = [];
+if (file_exists(ENV_DIR . "/.env")) {
+    $sharedEnvFile = fopen(ENV_DIR . "/.env", "r");
+    while ($line = fgets($sharedEnvFile)) {
+        $tokens = explode('=', $line, 2);
+        if (count($tokens) > 1) {
+            $env[$tokens[0]] = $line;
+        }
+    }
+}
+
+
+function getFileName($path) {
+    return str_replace(ENV_DIR . "/", "", $path);
+}
+
+foreach ($files as $file) {
+    if ($file == '.' || $file == '..' || $file == '.env') {
+        continue;
+    }
+
+    // example file name .env.backend
+    $fileName = getFileName($file);
+    $projectName = substr( $fileName, strrpos($fileName, '.')+1);
+
+
+    $envContent = file_get_contents($file);
+    foreach ($env as $varName => $item) {
+        $envContent = str_replace('#${'.$varName.'}', $item, $envContent);
+    }
+    file_put_contents(__DIR__ . "/../$projectName/.env", $envContent);
+}

@@ -6,7 +6,7 @@
         client
       </h1>
       <h2 class="subtitle">
-        Frontend for laravel backend
+        Frontend for laravel backend {{message}}
       </h2>
       <div class="links">
         <a
@@ -29,14 +29,35 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
 import Logo from '~/components/Logo.vue'
+import { Vue, Component, Prop } from 'vue-property-decorator'
+import gql from 'graphql-tag'
 
-export default Vue.extend({
-  components: {
-    Logo
-  }
+@Component({
+  components: {Logo}
 })
+export default class extends Vue {
+  msg: string = 'hello';
+
+  hello() {
+    this.$apollo.query({
+      query: gql`
+        query {
+            users {
+                paginatorInfo {
+                    total
+                }
+            }
+        }
+    `
+    }).then(result => console.log(result));
+    return 'Great';
+  }
+
+  get message() : string {
+    return this.msg + this.hello();
+  }
+}
 </script>
 
 <style>
