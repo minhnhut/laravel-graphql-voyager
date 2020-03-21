@@ -1,12 +1,14 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
+use App\Support\Model\UsesUuid;
 use Illuminate\Notifications\Notifiable;
 
 class User extends \TCG\Voyager\Models\User
 {
-    use Notifiable;
+
+    use Notifiable, UsesUuid;
 
     /**
      * The attributes that are mass assignable.
