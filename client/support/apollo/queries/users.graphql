@@ -1,4 +1,4 @@
-query {
+query users {
   users {
     data {
       name,
